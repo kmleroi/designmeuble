@@ -67,16 +67,7 @@ $( document ).ready(function() {
             { "orderable": false, "targets": 3}
         ]
     } );
-//finiton selected
-    $('.finition').click(function(){
-        if($(this).hasClass('finitionSel')){
-            $(this).removeClass('finitionSel');
-            $(this).css({'color': 'white', 'background-color': '#2CA8FF'});
-        }else{
-            $(this).addClass('finitionSel');
-            $(this).css({'color': '#495057', 'background-color': '#fff'});
-        }
-    });
+
 /******************Rubriques****************************/
 
 //store a new rubric
@@ -132,10 +123,11 @@ $( document ).ready(function() {
                 metaKeywords : metaKeywords
             },
             success: function (data) {
-                var response = jQuery.parseJSON(data);
-                $(".notification").removeClass("alert-danger");
-                $(".notification").addClass('alert-success').removeClass("none");
-                $('.msgNotification').html('<strong>'+response.success+'</strong>');
+                setTimeout(reload, 2000);
+                toast({
+                    type: 'success',
+                    title: 'Rubrique modifiée'
+                })
             },
             error:function (request) {
                 var errors = jQuery.parseJSON(request.responseText);
@@ -650,6 +642,115 @@ $('#newSousCatButton').click(function(e){
             }
         })
     });
+    //update Product
+//finiton selected
+    $('.material').change(function(){
+        if($(this).hasClass('materialChecked')){
+            $(this).removeClass('materialChecked');
+
+        }else{
+            $(this).addClass('materialChecked');
+        }
+
+    });
+    $('.updateProdButton').click(function(e){
+        var token = $('#token').val();
+        var id = $('#idProduct').val();
+        var view = $('#viewProd').val();
+        var ref = $('#refProd').val();
+        var name = $('#nameProd').val();
+        var resumeProd = $('#resumeProd').val();
+        var brand = $('#brand_id').val();
+        var collection = $('#collection_id').val();
+        var rubric = $('#rubric_id').val();
+        var category = $('#category_id').val();
+        var subCat = $('#sub_category_id').val();
+        var newProd = $('#newProd').val();
+        var promo = $('#promoProd').val();
+        var prixHtva = $('#prix_ht').val();
+        var prixTvac = $('#prix_ttc').val();
+        var prixPromoHtva = $('#prix_ht_promo').val();
+        var prixPromoTvac = $('#prix_ttc_promo').val();
+        var assemblage = $('#assemblage').val();
+        var style = $('#style').val();
+        var commande = $('#SurCommande').val();
+        var stock = $('#stock').val();
+        var description = $('#descProd').val();
+        var longeur = $('#longeur').val();
+        var largeur = $('#largeur').val();
+        var hauteur = $('#hauteur').val();
+        var poids = $('#poids').val();
+        var title = $('#titleProd').val();
+        var metadesc = $('#metaDescProd').val();
+        var metakey = $('#metaKeyProd').val();
+        var detailId = $('#detailId').val();
+        var materials = [];
+        $('.materialChecked').each(function(){
+            materials.push($(this).val());
+        });
+        var finition = JSON.stringify(materials);
+        $.ajax({
+            type : 'POST',
+            url: '/admin/products/'+id+'/update',
+            data:{
+                token : token,
+                view : view,
+                name: name,
+                product_detail_id : detailId,
+                reference: ref,
+                resume: resumeProd,
+                brand_id: brand,
+                collection_id: collection,
+                rubric_id: rubric,
+                category_id: category,
+                sub_category_id: subCat,
+                new : newProd,
+                promo : promo,
+                prixHtva : prixHtva,
+                prixTvac : prixTvac,
+                prixPromoHtva : prixPromoHtva,
+                prixPromoTvac : prixPromoTvac,
+                quantity : stock,
+                onCommand : commande,
+                description : description,
+                assemblage_id : assemblage,
+                style_id : style,
+                finition : finition,
+                largeur : largeur,
+                longeur : longeur,
+                hauteur : hauteur,
+                poids : poids,
+                title : title,
+                metaDescription : metadesc,
+                metaKeywords : metakey
+            },
+            success: function (data) {
+                var response = jQuery.parseJSON(data);
+                setTimeout(reload, 2000);
+                toast({
+                    type: 'success',
+                    title: 'Produit modifié'
+                })
+                //$(".notification").removeClass("alert-danger");
+                //$(".notification").addClass('alert-success').removeClass("none");
+                //$('.msgNotification').html('<strong>'+response.success+'</strong>');
+            },
+            error:function (request) {
+                var errors = jQuery.parseJSON(request.responseText);
+                var ul = document.createElement('ul');
+                $.each(errors, function (key, value) {
+                    var li = document.createElement('li');
+                    li.appendChild(document.createTextNode(value));
+                    ul.appendChild(li);
+                });
+                $(".notification").removeClass("alert-success");
+                $(".notification").addClass('alert-danger').removeClass("none");
+                $('.msgNotification').html(ul);
+            }
+        });
+        e.preventDefault();
+
+    });
 /******************************load select formulaire******************************************************/
     //load list category
     $('#rubric_id').change(function(){
@@ -676,7 +777,7 @@ $('#newSousCatButton').click(function(e){
     //load list collection
     $('#brand_id').change(function(){
         $('#collection_id').removeAttr('disabled');
-        $('#collection_id').html('<option>Choisissez une collection</option>');
+        $('#collection_id').html('<option value="0">Choisissez une collection</option>');
         var brand_id = $('#brand_id').val();
         $.ajax({
             type : 'POST',
@@ -688,7 +789,7 @@ $('#newSousCatButton').click(function(e){
                         $('#collection_id').append('<option value="' + value.id + '">' + value.name + '</option>');
                     });
                 }else {
-                    $('#collection_id').append('<option value="">rien à afficher</option>');
+                    $('#collection_id').append('<option value="0">rien à afficher</option>');
                 }
             },
             error:function (request) {
@@ -712,42 +813,9 @@ $('#newSousCatButton').click(function(e){
         calcul_tva(1,'#prix_ht_promo','#prix_ttc_promo');
     });
     /**********************************************************/
-    var tabimage=new Array();
     $('.addFileBt').click(function(){
         $('#fileupload').click();
     });
-    /*$('#file').change(function(){
-        function createThumbnail(file) {
-            var reader = new FileReader();
-            reader.addEventListener('load', function() {
-                var imgElement = document.createElement('img');
-                imgElement.style.maxWidth = '150px';
-                imgElement.style.maxHeight = '150px';
-                imgElement.src = this.result;
-                if( $.inArray( imgElement.src, tabimage) == -1 ){
-                    tabimage.push(imgElement.src);
-                    $('#prev').append('<div class="col-sm-3 imageBoxe d-flex justify-content-center flex-column"><img src="'+this.result+'" alt=""><button class="btn btn-danger btn-sm btn-round"><i class="fas fa-times"></i></button></div>');
-                }
-            });
-            reader.readAsDataURL(file);
-        }
-        var allowedTypes = ['png', 'jpg', 'jpeg', 'gif'],
-            fileInput = document.querySelector('#file'),
-            prev = document.querySelector('#prev');
-        fileInput.addEventListener('change', function() {
-            var files = this.files,
-                filesLen = files.length,
-                imgType;
-
-            for (var i = 0; i < filesLen; i++) {
-                imgType = files[i].name.split('.');
-                imgType = imgType[imgType.length - 1];
-                if (allowedTypes.indexOf(imgType) != -1) {
-                    createThumbnail(files[i]);
-                }
-            }
-        });
-    });*/
     $(function () {
         var files = $("#files");
         var productId = $('#idProduct').val();

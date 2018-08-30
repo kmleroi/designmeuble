@@ -9,14 +9,13 @@ class IndexController extends BaseController
 {
     public function show()
     {
-        echo 'HOME PAGE';
         //$token = CSRFToken::_token();
-        //return view('home', compact('token'));
+        return view('home', compact('token'));
     }
     
     public function featuredProducts()
     {
-        $products = Product::where('featured', 1)->inRandomOrder()->limit(4)->get();
+        $products = Product::where('new', 1)->inRandomOrder()->limit(4)->get();
         echo json_encode(['featured' => $products]);
     }
     
@@ -37,3 +36,4 @@ class IndexController extends BaseController
         }
     }
 }
+/*

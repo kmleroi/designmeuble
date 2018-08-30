@@ -132,14 +132,9 @@
                         <label for="nameSousCat">Nom de la sous-catégorie</label>
                         <input type="texte" class="form-control " name="name" id="nameSousCat" aria-describedby="Nom" placeholder="Entrer ici le nom de la sous-catégorie que vous souhaitez créer">
                     </div>
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input name="online" id="onLine" class="form-check-input onLineCheck" type="checkbox" value="0">
-                            Cette sous-catégorie est en ligne
-                            <span class="form-check-sign">
-                              <span class="check"></span>
-                            </span>
-                        </label>
+                    <div class="text-left pt-2">
+                        <Label class="mr-2 switch-lab">En Ligne : </Label>
+                        <input type="checkbox" class="switch onLineCheck" id="onLine" name="view"  data-size="mini"  data-off-text="Non" data-on-text="Oui" value="0">
                     </div>
                 </form>
             </div>

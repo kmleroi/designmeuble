@@ -88,7 +88,7 @@ class ProductCategoryController extends BaseController
                         ));
                         if($validation->passed()) {
                             $pos = Category::select('position')->where('rubric_id',$request->rubric_id)->orderBy('position','desc')->first();
-                            $pos = $pos->position +1;
+                            if($pos){$pos = $pos->position +1;}else{$pos=1;};
                             //process form data
                             $lastId = Category::create([
                                 'name' => $request->name,

@@ -10,8 +10,8 @@ class Product extends Model
     
     public $timestamps = true;
     protected $fillable = [
-        'name','reference', 'price','resume','rubric_id','product_detail_id', 'category_id', 'sub_category_id',
-        'image_path', 'view', 'quantity'
+        'name','reference', 'price','resume','rubric_id','product_detail_id', 'category_id', 'sub_category_id','PrixHtva','prixTvac',
+        'prixPromoHtva','prixPromoTvac','image_path', 'view', 'quantity'
     ];
     protected $dates = ['deleted_at'];
     
@@ -78,6 +78,10 @@ class Product extends Model
                 'sub_category_id' => $item->sub_category_id,
                 'sub_category_name' => SubCategory::where('id', $item->sub_category_id)->first()->name,
                 'image_path' => $item->image_path,
+                'prixHtva'=>$item->prixHtva,
+                'prixTvac'=>$item->prixTvac,
+                'prixPromoHtva'=>$item->prixPromoHtva,
+                'prixPromoTvac'=>$item->prixPromoTvac,
                 'added' => $added->toFormattedDateString(),
                 'updated' => $update->toFormattedDateString()
             ]);

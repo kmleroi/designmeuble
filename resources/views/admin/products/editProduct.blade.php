@@ -41,13 +41,13 @@
                             <div class="md-form d-flex justify-content-start">
                                 <div class="ml-3 mr-3">
                                     <Label class="mr-2 switch-lab f700">En Ligne : </Label>
-                                    <input type="checkbox" class="switch" id="viewProd" name="view"  checked="true" data-size="mini"  data-off-text="Non" data-on-text="Oui" value="1">
+                                    <input type="checkbox" class="switch" id="viewProd" name="view"  @if($product->view ) value="1" checked @else value="0" @endif data-size="mini"  data-off-text="Non" data-on-text="Oui" >
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="d-flex justify-content-end">
-                                <button class="mr-2 btn btn-info addProduct">Enregistrer&nbsp; <i class="fas fa-check"></i></button>
+                                <button class="mr-2 btn btn-info updateProdButton">Enregistrer&nbsp; <i class="fas fa-check"></i></button>
                                 <form action="/admin/subcategories/{{$subCat->id}}">
                                     <button class="btn btn-danger">Fermer&nbsp; <i class="fas fa-times"></i></button>
                                 </form>
@@ -81,7 +81,7 @@
                         </div><div class="card-body ">
                             <div class="tab-content text-center">
                                 <!-----Partie dédiée aux informations générale-------->
-                                <div class="tab-pane " id="descGen">
+                                <div class="tab-pane active " id="descGen">
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group text-left">
@@ -120,7 +120,7 @@
                                                 <label for="collection_id" class="ml-2 mb-2 f700">Collection</label>
                                                 @if(count($collections))
                                                     <select class="form-control form-controlBordered" id="collection_id">
-                                                        <option value="0" >Chosissez une collection</option>
+                                                        <option value="0">Choisissez une collection</option>
                                                         @foreach($collections as $col)
                                                             @if($product->collection_id == $col->id)
                                                                 <option value="{{$col->id}}" selected >{{$col->name}}</option>
@@ -131,7 +131,7 @@
                                                     </select>
                                                 @else
                                                     <select class="form-control form-controlBordered" id="collection_id" disabled>
-                                                        <option value="0" selected>Chosissez une collection</option>
+                                                        <option value="0" selected>Choisissez une collection</option>
                                                     </select>
                                                 @endif
                                             </div>
@@ -185,11 +185,11 @@
                                         </div>
                                         <div class="col-sm-4 form-group text-left">
                                             <Label class="mr-2 switch-lab f700">Nouveauté : </Label>
-                                            <input type="checkbox" class="switch" id="niewProd" name="view"  checked="true" data-size="mini"  data-off-text="Non" data-on-text="Oui" value="1">
+                                            <input type="checkbox" class="switch" id="newProd" name="new"  @if($product->new ) value="1" checked @else value="0" @endif data-size="mini"  data-off-text="Non" data-on-text="Oui">
                                         </div>
                                         <div class="col-sm-4 form-group text-left">
                                             <Label class="mr-2 switch-lab f700">En promo : </Label>
-                                            <input type="checkbox" class="switch switch-promo" id="promoProd" name="view"  data-size="mini"  data-off-text="Non" data-on-text="Oui" value="0">
+                                            <input type="checkbox" class="switch switch-promo" id="promoProd" name="promo"  @if($product->promo ) value="1" checked @else value="0" @endif data-size="mini"  data-off-text="Non" data-on-text="Oui">
                                         </div>
                                     </div>
                                     <div class="row ">
@@ -198,12 +198,12 @@
                                                 <p class="titleSection mb-3">Définition des prix</p>
                                                 <p class="text-left sousTitre">Prix HT</p>
                                                 <div class="input-group">
-                                                    <input id="prix_ht" type="text" class="form-control"  placeholder="Entrer un prix HTVA" >
+                                                    <input id="prix_ht" type="text" class="form-control"  placeholder="Entrer un prix HTVA" @if($product)value="{{$product->prixHtva}}"@else value="0" @endif>
                                                     <span class="input-group-addon d-flex justify-content-center align-items-center">&euro;</span>
                                                 </div>
                                                 <p class="text-left sousTitre">Prix TTC</p>
                                                 <div class="input-group">
-                                                    <input id="prix_ttc" type="text" class="form-control"  placeholder="Prix TVAC" >
+                                                    <input id="prix_ttc" type="text" class="form-control"  placeholder="Prix TVAC" @if($product)value="{{$product->prixTvac}}" @else value="0" @endif>
                                                     <span class="input-group-addon d-flex justify-content-center align-items-center">&euro;</span>
                                                 </div>
                                             </div>
@@ -213,18 +213,12 @@
                                                 <p class="titleSection  mb-3">Stock</p>
                                                 <p class="text-left sousTitre">Quantité disponible</p>
                                                 <div class="input-group">
-                                                    <input id="stock" type="number" class="form-control"  placeholder="Entrer un stock">
+                                                    <input id="stock" type="number" class="form-control"  placeholder="Entrer un stock" @if($product)value="{{$product->quantity}}" @else value="0" @endif>
                                                     <span class="input-group-addon d-flex justify-content-center align-items-center"><i class="fas fa-barcode"></i></span>
                                                 </div>
                                                 <p class="text-left sousTitre">Disponible sur commande</p>
-                                                <div class="form-check d-flex align-items-center">
-                                                    <label class="form-check-label">
-                                                        <input class="form-check-input onLineCheck onCommande " type="checkbox" value="0">
-                                                        Produit à commander
-                                                        <span class="form-check-sign">
-                                                          <span class="check"></span>
-                                                        </span>
-                                                    </label>
+                                                <div class="form-group text-left pl-1">
+                                                    <input type="checkbox" class="switch switch-Commande" id="SurCommande" name="commande"  data-size="mini"  data-off-text="Non" data-on-text="Oui" value="0">
                                                 </div>
                                             </div>
 
@@ -234,12 +228,12 @@
                                                 <p class="titleSection  mb-3">Promo</p>
                                                 <p class="text-left sousTitre">Prix promo HT</p>
                                                 <div class="input-group">
-                                                    <input id="prix_ht_promo" type="text" class="form-control"  placeholder="Entrer un prix HTVA" disabled>
+                                                    <input id="prix_ht_promo" type="text" class="form-control"  placeholder="Entrer un prix HTVA"  @if($product->promo)value="{{$product->prixPromoHtva}}" @else value="0" disabled @endif>
                                                     <span class="input-group-addon d-flex justify-content-center align-items-center">&euro;</span>
                                                 </div>
                                                 <p class="text-left sousTitre">Prix promo TTC</p>
                                                 <div class="input-group">
-                                                    <input id="prix_ttc_promo" type="text" class="form-control"  placeholder="Prix TVAC" disabled>
+                                                    <input id="prix_ttc_promo" type="text" class="form-control"  placeholder="Prix TVAC"  @if($product->promo)value="{{$product->prixPromoTvac}}" @else value="0" disabled @endif>
                                                     <span class="input-group-addon d-flex justify-content-center align-items-center">&euro;</span>
                                                 </div>
                                             </div>
@@ -249,61 +243,78 @@
                                 </div>
                                 <!-----Partie dédiée aux infos techniques-------->
 
-                                <div class="tab-pane active" id="technics" >
+                                <div class="tab-pane " id="technics" >
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group text-left">
                                                 <label for="Assemblage" class="ml-2 mb-2 f700">Assemblage</label>
                                                 <select class="form-control form-controlBordered" id="assemblage">
-                                                    <option value="" selected>Chosissez un type d'assemblage</option>
+                                                    <option value="0" selected>Chosissez un type d'assemblage</option>
                                                     @foreach ($montages as $montage)
-                                                        <option value="{{$montage->id}}">{{$montage->name}}</option>
+                                                        @if($montage->id == $details->assemblage_id)
+                                                            <option value="{{$montage->id}}" selected>{{$montage->name}}</option>
+                                                        @else
+                                                            <option value="{{$montage->id}}">{{$montage->name}}</option>
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-sm-6 p-2">
-                                                    <label for="style" class="ml-2 mb-2 f700 d-flex justify-content-start">Finition</label>
-                                                    <div class="list-group">
-                                                        @foreach ($materials as $material)
-                                                            <button type="button" class="list-group-item list-group-item-action finition">{{$material->name}}</button>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-6 p-2">
-                                                    <div class="form-group text-left">
-                                                        <label for="style" class="ml-2 mb-2 f700">Style</label>
-                                                        <select class="form-control form-controlBordered" id="style">
-                                                            <option value="" selected>Chosissez un style</option>
-                                                            @foreach ($styles as $style)
-                                                                <option value="{{$style->id}}">{{$style->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="form-group text-left">
+                                                <label for="style" class="ml-2 mb-2 f700">Style</label>
+                                                <select class="form-control form-controlBordered" id="style">
+                                                    <option value="0" selected>Chosissez un style</option>
+                                                    @foreach ($styles as $style)
+                                                        @if($style->id == $details->style_id)
+                                                            <option selected value="{{$style->id}}">{{$style->name}}</option>
+                                                        @else
+                                                            <option value="{{$style->id}}">{{$style->name}}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
                                             </div>
                                             <div class="form-group text-left">
-                                                <label for="descProd" class="ml-2 mb-2 f700">description</label>
-                                                <textarea class="form-control textareaBordered" id="descProd" rows="20" ></textarea>
+                                                @if($details->finition)
+                                                    @php
+                                                        $finition = json_decode($details->finition);
+                                                    @endphp
+                                                @else
+                                                    @php
+                                                        $finition = [];
+                                                    @endphp
+                                                @endif
+                                                <label for="finition" class="ml-2 mb-2 f700">Finition</label><br>
+                                                @foreach ($materials as $material)
+                                                    <span class="d-flex align-content-center">
+                                                        @if(in_array($material->name, $finition))
+                                                            <input type="checkbox" checked class="mr-2 material materialChecked" value="{{$material->name}}"><span class="mr-2">{{$material->name}}</span>
+                                                        @else
+                                                            <input type="checkbox"  class="mr-2 material" value="{{$material->name}}"><span class="mr-2">{{$material->name}}</span>
+                                                        @endif
+                                                     </span>
+                                                @endforeach
+                                            </div>
+                                            <div class="form-group text-left">
+                                                <label for="descProd" class="ml-2 mb-2 f700">Description</label>
+                                                <textarea class="form-control textareaBordered" id="descProd" rows="20" >@if($details){{$details->description}}@endif</textarea>
                                                 <span class="help-block">Description du produit.</span>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="longeur" class="ml-2 mb-2 f700">Longeur</label>
-                                                <input type="number" class="form-control form-controlBordered" id="longeur" >
+                                                <input type="number" class="form-control form-controlBordered" id="longeur" @if($details->longeur)value="{{$details->longeur}}"@else value="0" @endif>
                                             </div>
                                             <div class="form-group">
                                                 <label for="largeur" class="ml-2 mb-2 f700">Largeur</label>
-                                                <input type="number" class="form-control form-controlBordered" id="largeur" >
+                                                <input type="number" class="form-control form-controlBordered" id="largeur"  @if($details->largeur)value="{{$details->largeur}}"@else value="0" @endif >
                                             </div>
                                             <div class="form-group">
                                                 <label for="hauteur" class="ml-2 mb-2 f700">Hauteur</label>
-                                                <input type="number" class="form-control form-controlBordered" id="heuteur" >
+                                                <input type="number" class="form-control form-controlBordered" id="hauteur"  @if($details->hauteur)value="{{$details->hauteur}}"@else value="0" @endif>
                                             </div>
                                             <div class="form-group">
                                                 <label for="poids" class="ml-2 mb-2 f700">Poids</label>
-                                                <input type="number" class="form-control form-controlBordered" id="heupoidsteur" >
+                                                <input type="number" class="form-control form-controlBordered" id="poids"  @if($details->poids)value="{{$details->poids}}"@else value="0" @endif>
                                                 <span class="help-block text-left">Arrondissez ces valeurs à l'unité.</span>
                                             </div>
                                         </div>
@@ -314,18 +325,20 @@
 
                                 <div class="tab-pane" id="seo">
                                     <div class="form-group text-left">
-                                        <label for="titleCat" class="ml-2 mb-2 f700">Titre de la page</label>
-                                        <input type="texte" class="form-control form-controlBordered" id="titleCat" value="" placeholder="Assurez-vous d'avoir un titre clair et qui contient les mots-clés correspondant à la page en cours">
+                                        <label for="titleProd" class="ml-2 mb-2 f700">Titre de la page</label>
+                                        <input type="texte" class="form-control form-controlBordered" id="titleProd"
+                                               @if($details)value="{{$details->title}}"@endif
+                                               placeholder="Assurez-vous d'avoir un titre clair et qui contient les mots-clés correspondant à la page en cours">
                                         <span class="help-block">L'élément HTML TITLE est le plus important dans votre page</span>
                                     </div>
                                     <div class="form-group text-left">
-                                        <label for="metaDescCat" class="ml-2 mb-2 f700">Meta description</label>
-                                        <textarea class="form-control textareaBordered" id="metaDescCat" rows="10"  placeholder="Assurez-vous d'avoir des mots-clés présents dans la page courante"></textarea>
+                                        <label for="metaDescProd" class="ml-2 mb-2 f700">Meta description</label>
+                                        <textarea class="form-control textareaBordered" id="metaDescProd" rows="10"  placeholder="Assurez-vous d'avoir des mots-clés présents dans la page courante">@if($details){{$details->metaDescription}}@endif</textarea>
                                         <span class="help-block">Votre description ne devrait pas dépasser 150 à 160 caractères</span>
                                     </div>
                                     <div class="form-group text-left">
-                                        <label for="metaKeyCat" class="ml-2 mb-2 f700">Meta keywords</label>
-                                        <textarea class="form-control textareaBordered" id="metaKeyCat" rows="10"  placeholder="Ne répétez pas sans cesse les mêmes mots-clés dans une lignes. Préférez utiliser des expressions de mots-clés. "></textarea>
+                                        <label for="metaKeyProd" class="ml-2 mb-2 f700">Meta keywords</label>
+                                        <textarea class="form-control textareaBordered" id="metaKeyProd" rows="10"  placeholder="Ne répétez pas sans cesse les mêmes mots-clés dans une lignes. Préférez utiliser des expressions de mots-clés. ">@if($details){{$details->metaKeywords}}@endif</textarea>
                                         <span class="help-block">Vous n'avez pas besoin d'utiliser de virgules ou d'autres signes de ponctuation</span>
                                     </div>
                                 </div>
@@ -361,7 +374,6 @@
                                                                 <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-icon delSubCatButton" data-id ="{{$img->id}}" data-name ="{{$img->name}}" >
                                                                     <i class="fa fa-trash"></i>
                                                                 </button>
-                                                                <input id="token{{$img->id}}" name="token" type="hidden" value="{{\App\Classes\CSRFToken::_token()}}">
                                                             </td>
 
                                                         </tr>
@@ -381,7 +393,8 @@
 
                                     </div>
                                 <input id="token" name="token" type="hidden" value="{{\App\Classes\CSRFToken::_token()}}">
-                                <input id="idProdImage" name="idProd" type="hidden" value="0">
+                                <input id="detailId" name="detail" type="hidden" value="{{$product->product_detail_id}}">
+                                <input id="idProdImage" name="idProd" type="hidden" value="{{$product->id}}">
                             </div>
                         </div>
                     </div>

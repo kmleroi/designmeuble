@@ -135,6 +135,7 @@ class RubricController extends BaseController
      */
     public function update($id)
     {
+
         if(Request::has('post')){
             $request = Request::get('post');
             if(CSRFToken::verifyCSRFToken($request->token, false)){
@@ -144,8 +145,7 @@ class RubricController extends BaseController
                         'name' => array(
                             'required' => true,
                             'length_min' => 3,
-                            'length_max' => 30,
-                            'unique' => true
+                            'length_max' => 30
                         ),
                     'metaDescription' => array(
                             'length_max' => 150
@@ -155,8 +155,8 @@ class RubricController extends BaseController
                         )
                     ));
                     if($validation->passed()) {
-                        //process form data
-                        Category::where('id', $id)->update([
+                                           //process form data
+                        Rubric::where('id', $id)->update([
                             'name' => $request->name,
                             'slug' => slug($request->name),
                             'view' =>$request->view,

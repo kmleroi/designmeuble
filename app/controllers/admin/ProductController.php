@@ -14,6 +14,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Collection;
 use App\Models\Product;
+use App\Models\ProductDetail;
 use App\Models\ProductImage;
 use App\Models\ProductMaterial;
 use App\Models\ProductMontage;
@@ -75,6 +76,7 @@ class ProductController extends BaseController
         $subCat = SubCategory::where('id', $product->sub_category_id)->first();
         $category = Category::where('id', $product->category_id)->first();
         $rubric = Rubric::where('id', $product->rubric_id)->first();
+        $details = ProductDetail::where('id', $product->product_detail_id)->first();
         $product_images = ProductImage::where('product_id', $id)->get();
         $categories = $this->categories;
         $subcategories = $this->subcategories;
@@ -83,9 +85,9 @@ class ProductController extends BaseController
         $montages = $this->montages;
         $materials = $this->materials;
         $rubrics = $this->rubrics;
-        $collections = Collection::where('brand_id', $product->brand_id)->get();;
+        $collections = Collection::where('brand_id', $product->brand_id)->get();
         return view('admin/products/editProduct', compact('product','categories','subCat','brands','styles',
-            'materials','montages','category','subcategories','rubric','rubrics','collections','product_images'));
+            'materials','montages','category','subcategories','rubric','rubrics','collections','product_images','details'));
     }
 
     public function store()
@@ -131,12 +133,15 @@ class ProductController extends BaseController
                                 exit;
                             }else{
                                 //process form data
+                                $lastIdDetail = ProductDetail::create()->id;
+
                                 $lastId = Product::create([
                                     'name' => $request->name,
                                     'rubric_id' => $request->rubric_id,
                                     'category_id' => $request->category_id,
                                     'sub_category_id' => $request->sub_category_id,
-                                    'reference' => $request->reference
+                                    'reference' => $request->reference,
+                                    'product_detail_id' => $lastIdDetail
                                 ])->id;
                                 echo $lastId;
                                 exit;
@@ -205,7 +210,7 @@ class ProductController extends BaseController
         return null;
     }
 
-    public function update()
+    public function update123()
     {
         if(Request::has('post')){
             $request = Request::get('post');
@@ -262,13 +267,149 @@ class ProductController extends BaseController
         
         return null;
     }
-    
+    public function update($id)
+    {
+        if(Request::has('post')){
+            $request = Request::get('post');
+            if(CSRFToken::verifyCSRFToken($request->token, false)){
+                if(!empty($_POST)) {
+                    $validate = new Validate();
+                    $validation = $validate->check($_POST, array(
+                        'name' => array(
+                            'required' => true,
+                            'length_min' => 3,
+                            'length_max' => 30
+                        ),
+                        'metaDescription' => array(
+                            'length_max' => 150
+                        ),
+                        'view' => array(
+                            'numeric' => true
+                        )
+                    ));
+                    if($validation->passed()) {
+                        $errors = [];
+                        $rubric = Rubric::where('id',$request->rubric_id)->exists();
+                        if(!$rubric){
+                            $errors[]='Rubrique parente invalide.';
+                            header('HTTP/1.1 422 Unprocessable Entity', true, 422);
+                            echo json_encode($errors);
+                            exit;
+                        }else{
+                            $category = Category::where('id', $request->category_id)->exists();
+                            if(!$category){
+                                $errors[]='Categorie parente invalide.';
+                                header('HTTP/1.1 422 Unprocessable Entity', true, 422);
+                                echo json_encode($errors);
+                                exit;
+                            }
+                            else{
+                                $subCategory = SubCategory::where('id', $request->sub_category_id)->exists();
+                                if(!$subCategory){
+                                    $errors[]='Sous-Categorie parente invalide.';
+                                    header('HTTP/1.1 422 Unprocessable Entity', true, 422);
+                                    echo json_encode($errors);
+                                    exit;
+                                }
+                                else{
+                                    $brand = Brand::where('id', $request->brand_id)->exists();
+                                    if(!$brand){
+                                        $errors[]='Fabriquant invalide.';
+                                        header('HTTP/1.1 422 Unprocessable Entity', true, 422);
+                                        echo json_encode($errors);
+                                        exit;
+                                    }
+                                    else{
+                                        $collection = Brand::where('id', $request->collection_id)->exists();
+                                        if(!$brand){
+                                            $errors[]='Collection invalide.';
+                                            header('HTTP/1.1 422 Unprocessable Entity', true, 422);
+                                            echo json_encode($errors);
+                                            exit;
+                                        }
+                                        else{
+                                            ProductDetail::where('id', $request->product_detail_id)->update(
+                                                [
+                                                    'assemblage_id' => $request->assemblage_id,
+                                                    'style_id' => slug($request->style_id),
+                                                    'finition' => $request->finition,
+                                                    'description' =>$request->description,
+                                                    'longeur' =>$request->longeur,
+                                                    'largeur' =>$request->largeur,
+                                                    'hauteur' =>$request->hauteur,
+                                                    'poids' =>$request->poids,
+                                                    'title' =>$request->title,
+                                                    'metaDescription' =>$request->metaDescription,
+                                                    'metaKeywords' =>$request->metaKeywords
+                                                ]
+                                            );
+                                            Product::where('id', $id)->update(
+                                                [
+                                                    'name' => $request->name,
+                                                    'reference' => $request->reference,
+                                                    'resume' => $request->resume,
+                                                    'quantity' => $request->quantity,
+                                                    'view' =>$request->view,
+                                                    'rubric_id' =>$request->rubric_id,
+                                                    'category_id' =>$request->category_id,
+                                                    'sub_category_id' =>$request->sub_category_id,
+                                                    'brand_id' =>$request->brand_id,
+                                                    'collection_id' =>$request->collection_id,
+                                                    'new' =>$request->new,
+                                                    'promo' =>$request->promo,
+                                                    'prixHtva' =>$request->prixHtva,
+                                                    'prixTvac' =>$request->prixTvac,
+                                                    'prixPromoHtva' =>$request->prixPromoHtva,
+                                                    'prixPromoTvac' =>$request->prixPromoTvac,
+                                                    'onCommand' => $request->onCommand
+                                                ]
+                                            );
+
+                                        }
+                                    }
+
+                                }
+
+                            }
+                            echo json_encode(['success' => 'Record Update Successfully']);
+                            exit;
+                        }
+
+                    }
+                    else {
+                        $errors = [];
+                        foreach($validation->errors() as $error)
+                        {
+                            $errors [] = $error;
+                        }
+                        header('HTTP/1.1 422 Unprocessable Entity', true, 422);
+                        echo json_encode($errors);
+                        exit;
+                        //$categories = Category::where('id', $id)->first();
+                        //$subCat = SubCategory::where('category_id',$id)->get();
+                        //return view('Admin/products/EditCategory', compact('categories','subCat','errors'));
+                    }
+                }
+
+            }
+            throw new \Exception('Token mismatch');
+        }
+
+        return null;
+    }
+
     public function delete($id)
     {
         if(Request::has('post')){
             $request = Request::get('post');
             
             if(CSRFToken::verifyCSRFToken($request->token)){
+
+                $product = Product::where('id', $id)->first();
+                $nbr = Product::where('product_detail_id', $product->product_detail_id)->count();
+                if($nbr<=1){
+                    ProductDetail::destroy($product->product_detail_id);
+                }
                 Product::destroy($id);
                 echo 'success';
                 exit;

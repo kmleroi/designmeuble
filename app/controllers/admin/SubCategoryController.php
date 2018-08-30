@@ -72,7 +72,7 @@ class SubCategoryController extends BaseController
                             }
                             else{
                                 $pos = SubCategory::select('position')->where('category_id', $request->category_id)->orderBy('position','desc')->first();
-                                $pos = $pos->position +1;
+                                if($pos){$pos = $pos->position +1;}else{$pos=1;};
                                 //process form data
                                 $lastId = SubCategory::create([
                                     'name' => $request->name,

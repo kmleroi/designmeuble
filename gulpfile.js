@@ -9,21 +9,17 @@ elixir(function (mix) {
         //1.arrau with the file
         [
             //PLUGINS CSS STYLE
-            'plugins/jquery-ui/jquery-ui.css',
-            'plugins/bootstrap/css/bootstrap.min.css',
-            'plugins/font-awesome/css/font-awesome.min.css',
-            'plugins/selectbox/select_option1.css',
-            'plugins/fancybox/jquery.fancybox.min.css',
-            'plugins/iziToast/css/iziToast.css',
-            'plugins/prismjs/prism.css',
-            'plugins/rs-plugin/css/settings.css',
-            'plugins/slick/slick.css',
-            'plugins/slick/slick-theme.css',
-            //CUSTOM CSS -->
-            'css/style.css',
-            'css/color-option4.css'
+            'bootstrap.min.css',
+            'font-awesome.min.css',
+            'owl.carousel.min.css',
+            'ie7.css',
+            'meanmenu.css',
+            'animate.css',
+            'bundle.css',
+            'style.css',
+            'responsive.css'
         ],'public/css/all.css',//2.output file
-        'resources/assets' //origin folder
+        'resources/assets/css' //origin folder
     );
     mix.styles(
         //1.arrau with the file
@@ -32,27 +28,20 @@ elixir(function (mix) {
             'bootstrap.min.css',
             'now-ui-dashboard.css'
         ],'public/css/style.css',//2.output file
-        'resources/assets/Admin/css' //origin folder
+        'resources/assets/admin/css' //origin folder
     );
 
     //combine js file
     mix.scripts(
         [
-            'plugins/jquery/jquery.min.js',
-            'plugins/jquery/jquery-migrate-3.0.0.min.js',
-            'plugins/jquery-ui/jquery-ui.js',
-            'plugins/bootstrap/js/popper.min.js',
-            'plugins/bootstrap/js/bootstrap.min.js',
-            'plugins/rs-plugin/js/jquery.themepunch.tools.min.js',
-            'plugins/rs-plugin/js/jquery.themepunch.revolution.min.js',
-            'plugins/slick/slick.js',
-            'plugins/fancybox/jquery.fancybox.min.js',
-            'plugins/iziToast/js/iziToast.js',
-            'plugins/prismjs/prism.js',
-            'plugins/selectbox/jquery.selectbox-0.1.3.min.js',
-            'plugins/countdown/jquery.syotimer.js',
-            'plugins/velocity/velocity.min.js',
-            'js/custom.js'
+            'js/jquery.js',
+            'js/popper.js',
+            'js/bootstrap.min.js',
+            'js/owl.carousel.min.js',
+            'js/jquery.meanmenu.js',
+            'js/plugins.js',
+            'js/main.js',
+            'bower/vendor/axios/dist/axios.min.js'
         ], 'public/js/all.js',
         'resources/assets');
 
@@ -65,6 +54,6 @@ elixir(function (mix) {
             'plugins/bootstrap-notify.js',
             'now-ui-dashboard.min.js'
         ], 'public/js/js.js',
-        'resources/assets/Admin/js');
+        'resources/assets/admin/js');
 
 })
